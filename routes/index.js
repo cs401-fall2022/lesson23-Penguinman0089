@@ -61,6 +61,26 @@ router.post('/add', (req, res, next) => {
   );
 })
 
+router.post('/anything', (req, res, next) => {
+  console.log("deleting stuff without checking if it is valid! SEND IT!");
+  var db = new sqlite3.Database('mydb.sqlite3',
+    sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
+    (err) => {
+      if (err) {
+        console.log("Getting error " + err);
+        exit(1);
+      }
+      console.log("inserting " + req.body.blog);
+      //NOTE: This is dangerous! you need to sanitize input from the user
+      //this is ripe for a exploit! DO NOT use this in production :)
+      //Try and figure out how why this is unsafe and how to fix it.
+      //HINT: the answer is in the XKCD comic on the home page little bobby tables :)
+      db.exec(`update blog set blog_txt='${req.body.otherblog}'where blog_id='${req.body.blog}';`);     
+      res.redirect('/');
+    }
+  );
+})
+
 router.post('/delete', (req, res, next) => {
   console.log("deleting stuff without checking if it is valid! SEND IT!");
   var db = new sqlite3.Database('mydb.sqlite3',
